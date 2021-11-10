@@ -1,0 +1,24 @@
+{
+    "name": "Excerice 6",
+    "version": "0.1",
+    "description": "Build an Extension with State!",
+    "manifest_version": 2,
+    "background": {    
+        "page": "background.html",
+        "persistent": false        
+    },
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js":      ["content-script.js"]
+    }],
+    "browser_action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "web_accessible_resources": [
+        "src/particles.js"
+      ]
+
+  }

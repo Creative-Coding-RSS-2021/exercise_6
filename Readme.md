@@ -10,3 +10,10 @@ In this exercise we will
 
 - Chrome Extenstion: [Storage API](https://developer.chrome.com/docs/extensions/reference/storage/)
 - Essential ES6 / ES2015 JavaScript: [Video](https://www.youtube.com/watch?v=CozSF5abcTA)
+
+
+# Expriments
+
+1. try the same from scratch
+
+2. cancel standby mode by `mousemove` event

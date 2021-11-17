@@ -12,8 +12,8 @@ In this exercise we will
 - Essential ES6 / ES2015 JavaScript: [Video](https://www.youtube.com/watch?v=CozSF5abcTA)
 
 
-# Expriments
+# Experiments
 
-1. try the same from scratch
+1. try the same but from scratch
 
 2. cancel standby mode by `mousemove` event

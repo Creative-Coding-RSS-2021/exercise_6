@@ -36,57 +36,120 @@ export const renderStandBy = () => {
             this.radius = 10
     
         }
-    
-        draw (ctx) {
 
+        ensureDirection () {
             if (this.coord.x <= 0 || this.coord.x >= width) {
                 this.vel.x = -this.vel.x
             }
             if (this.coord.y <= 0 || this.coord.y >= height) {
                 this.vel.y = -this.vel.y
             }
+        }
     
-    
+        avoidCollision (coord) {
+            if (distance(this.coord, coord) <= this.radius * 2){
+                this.vel.x = -this.vel.x
+                this.vel.y = -this.vel.y
+            }
+        }
+        draw (ctx) {
+
+           
             this.coord.x += this.vel.x
             this.coord.y += this.vel.y
 
 
     
             ctx.beginPath();
+            ctx.strokeStyle = 'black'
             ctx.arc(this.coord.x, this.coord.y, this.radius, 0, 2 * Math.PI);
-            ctx.fillStyle = 'black'
-
-            ctx.fill();
+            ctx.lineWidth = 1
+            ctx.stroke();
     
         }
     }
 
-        const randomCoordVector = () => {
-            const x = Math.random() * width
-            const y = Math.random() * height
-            return new Vector(x,y)
-        }
+    const randomCoordVector = () => {
+        const x = Math.random() * width
+        const y = Math.random() * height
+        return new Vector(x,y)
+    }
 
-        const randomVelocityVector = () => {
-            const x = Math.random() * 2 - 1
-            const y = Math.random() * 2 - 1
-            return new Vector(x,y)
-        }
+    const randomVelocityVector = () => {
+        const x = Math.random() * 2 - 1
+        const y = Math.random() * 2 - 1
+        return new Vector(x,y)
+    }
 
-        const agents = [...Array(300).keys()].map(_ => new Agent(randomCoordVector(), randomVelocityVector()))
+    const agents = [...Array(20).keys()].map(_ => new Agent(randomCoordVector(), randomVelocityVector()))
 
-        const render = (time) => {
+    const distance = (a, b) => Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
 
-            starttime = starttime || time
+    const gradient = ctx.createLinearGradient(0, 0, Math.floor(width), 0);
+    gradient.addColorStop("0", "magenta");
+    gradient.addColorStop("0.5" ,"blue");
+    gradient.addColorStop("1.0", "red");
 
-            requestAnimationFrame(render)
+    const lineWidthByDistance = (currentDistance, maxDistance) => {
 
-            ctx.clearRect(0, 0, ...sizes)
+        const maxWidth = 20
+        const minWidth = 1
+
+        return minWidth + (1 - currentDistance/maxDistance) * (maxWidth - minWidth)
+    }
+
+    /**
+     * RENDER the scene
+     */
+    const render = (time) => {
+
+        starttime = starttime || time
+
+        requestAnimationFrame(render)
+
+        ctx.clearRect(0, 0, ...sizes)
+
+        
+
+        for(let i = 0; i< agents.length; i++){
+            const fromCoord = agents[i].coord
+            for (let j = 0; j < agents.length; j++){
+
+                if(agents[j] === agents[i])
+                    continue;
+
+                const toCoord =  agents[j].coord
+
+                const _distance = distance(fromCoord, toCoord)
+
+                agents[j].avoidCollision(fromCoord)
+                if (distance(fromCoord, toCoord) < 100) {
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = gradient
+                    ctx.moveTo(fromCoord.x, fromCoord.y);
+                    ctx.lineTo(toCoord.x, toCoord.y);
+                    
+                    ctx.lineWidth = lineWidthByDistance(_distance, 100);
+                    ctx.lineCap = 'round'
+
+                    ctx.stroke();
+
+                }
+
+                
+            }
+            agents[i].ensureDirection()
+
+            agents[i].draw(ctx)
+            
 
             
-            agents.forEach(agent => agent.draw(ctx))
-
+            //agents.forEach(agent => agent.draw(ctx))
         }
+        
+
+    }
 
 
     document.body.appendChild(canvas)
